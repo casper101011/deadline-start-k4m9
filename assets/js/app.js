@@ -110,7 +110,7 @@ function pageHome() {
       <div class="stage-plain">
         <div class="sp-head"><h2>${s.title}. ${s.name}</h2><p>${s.desc}</p></div>
         <div class="rows">
-          ${ls.map((l, i) => `<a class="row" href="#/lesson/${l.slug}"><span class="rn">${i + 1}</span><span class="rt">${l.title}</span><span class="rm">${l.minutes} мин</span><span class="done-mark ${isDone(l.slug) ? 'on' : ''}">${icon('check', 'icon-sm')}</span></a>`).join('')}
+          ${ls.map((l, i) => `<a class="row" href="#/lesson/${l.slug}"><span class="rn">${i + 1}</span><span class="rt">${l.title}<small>${l.short}</small></span><span class="rm">${l.minutes} мин</span><span class="done-mark ${isDone(l.slug) ? 'on' : ''}">${icon('check', 'icon-sm')}</span></a>`).join('')}
         </div>
       </div>`;
     }).join('')}
@@ -156,8 +156,8 @@ function pageLesson(slug) {
         <p class="lead">${l.goal}</p>
       </header>
       <div class="prose">${l.html}</div>
-      <section class="prose end"><h2>Главное</h2>${ul(l.summary)}</section>
-      <section class="prose end"><h2>${SITE.homeworkTitle}</h2><p>${SITE.homeworkLead}</p>${ol(l.homework)}</section>
+      <section class="prose end end-sum"><h2>Главное</h2>${ok(l.summary)}</section>
+      <section class="prose end end-hw"><h2>${SITE.homeworkTitle}</h2><p>${SITE.homeworkLead}</p>${ol(l.homework)}</section>
       <div class="done-row">
         <button class="btn ${isDone(slug) ? 'btn-ghost' : 'btn-primary'}" id="doneBtn">${isDone(slug) ? 'Снять отметку «пройден»' : 'Отметить урок пройденным'}</button>
       </div>
