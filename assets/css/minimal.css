@@ -1,0 +1,118 @@
+/* Deadline EDU — минимализм: один акцент, мало форматов подачи.
+   Подключается последним и упрощает всё, что нарисовано в style.css и extra.css. */
+
+/* ---------- Фон: ровный, без фото, точек и свечения ---------- */
+body::before, body::after, .bg-photo, .hero::before { display: none; }
+
+/* ---------- Главная ---------- */
+.hero { padding-top: clamp(36px, 6vw, 90px); padding-bottom: clamp(32px, 4vw, 56px); }
+.hero .display { font-size: clamp(44px, 6.4vw, 104px); margin: 0 0 clamp(24px, 3vw, 40px); }
+.hero-sub { font-size: 18px; color: var(--text-2); }
+.progress-label { font-size: 13px; }
+.stage-plain { margin: 0 0 clamp(40px, 5vw, 64px); }
+.sp-head { display: flex; align-items: baseline; justify-content: space-between; gap: 24px; margin-bottom: 8px; flex-wrap: wrap; }
+.sp-head h2 { margin: 0; font-size: 22px; font-weight: 600; letter-spacing: -.01em; font-family: var(--font); }
+.sp-head p { margin: 0; color: var(--muted); font-size: 15px; max-width: 560px; }
+.rows { border-top: 1px solid var(--border); }
+.row { display: grid; grid-template-columns: 36px minmax(0, 1fr) auto 28px; align-items: center; gap: 14px; padding: 18px 4px; border-bottom: 1px solid var(--border); transition: background .15s; }
+.row:hover { background: var(--surface); }
+.row .rn { color: var(--muted); font-size: 14px; }
+.row .rt { font-size: 17px; font-weight: 500; }
+.row .rt small { display: block; margin-top: 3px; font-size: 14px; font-weight: 400; color: var(--muted); }
+.row .rm { color: var(--muted); font-size: 14px; display: inline-flex; }
+.row-tool { grid-template-columns: minmax(0, 1fr) auto; }
+.today-list { margin: 0; padding: 0; list-style: none; counter-reset: t; border-top: 1px solid var(--border); }
+.today-list li { counter-increment: t; padding: 16px 4px 16px 40px; position: relative; border-bottom: 1px solid var(--border); font-size: 17px; }
+.today-list li::before { content: counter(t); position: absolute; left: 4px; top: 16px; color: var(--muted); font-size: 14px; }
+.today-list a { color: var(--text); }
+.today-list a:hover { text-decoration: underline; text-underline-offset: 4px; }
+.done-mark { width: 22px; height: 22px; }
+
+/* ---------- Урок ---------- */
+.article { max-width: 720px; }
+.cover, .toc, .article .toc, .crumbs { display: none !important; }
+.article-head { margin-bottom: 36px; }
+.l-meta { margin: 0 0 14px; font-size: 14px; color: var(--muted); }
+.article-head .display { font-size: clamp(32px, 3.6vw, 48px); line-height: 1.02; margin: 0 0 20px; }
+.lead { margin: 0; font-size: 19px; line-height: 1.6; color: var(--text-2); }
+.prose p, .prose li { font-size: 17px; line-height: 1.7; }
+.prose h2 {
+  display: block; font-family: var(--font); text-transform: none; font-size: 24px; font-weight: 600; line-height: 1.3; letter-spacing: -.01em;
+  margin: 52px 0 14px;
+}
+.prose h2 .step-n { display: none; }
+.prose h3 { font-size: 17px; font-weight: 600; margin: 24px 0 8px; }
+.prose.end h2 { margin-top: 56px; }
+
+/* все списки — одинаковые точки, без зелёных галочек и красных крестиков */
+.prose ul.checks li::before, .prose ul.crosses li::before {
+  content: ""; position: absolute; left: 4px; top: .78em; width: 6px; height: 6px; border-radius: 50%; background: var(--border-strong);
+}
+.prose ul.checks li, .prose ul.crosses li { padding-left: 22px; }
+.prose ul.checks li .icon, .prose ul.crosses li .icon { display: none; }
+.prose ol li::before { background: none; color: var(--muted); font-size: 15px; width: auto; height: auto; top: 0; border-radius: 0; display: block; }
+.prose ol li::before { content: counter(n) "."; }
+.prose ol li { padding-left: 28px; }
+
+/* один вид врезки вместо пяти цветных */
+.box, .box.example, .box.mistake, .box.tip, .box.template, .box.good {
+  background: none; border: 0; border-left: 2px solid var(--border-strong); border-radius: 0; padding: 2px 0 2px 18px; margin: 22px 0;
+}
+.box-title { font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: 6px; }
+.box-title .icon { display: none; }
+.box.example .box-title, .box.mistake .box-title, .box.tip .box-title, .box.good .box-title { color: var(--muted); }
+.box.template p { color: var(--text-2); }
+.prose blockquote { background: none; border-radius: 0; border-left: 2px solid var(--text); padding: 2px 0 2px 18px; font-size: 19px; line-height: 1.5; margin: 22px 0; }
+
+/* «слабо / сильно» без красных и зелёных плашек */
+.compare { display: block; margin: 16px 0 22px; }
+.compare > div, .compare .bad, .compare .good { background: none; padding: 0 0 0 18px; margin-bottom: 14px; border-left: 2px solid var(--border-strong); border-radius: 0; }
+.compare small, .compare .bad small, .compare .good small { color: var(--muted); }
+.compare .bad p { color: var(--muted); }
+
+/* карточки «1. По системе…» превращаются в обычные строки */
+.grid-2 { display: block; margin: 12px 0 20px; }
+.mini { background: none; border: 0; padding: 0; margin: 0 0 10px; }
+.mini h4 { display: inline; font-size: 17px; margin: 0; font-weight: 600; }
+.mini h4 .icon { display: none; }
+.mini h4::after { content: " — "; font-weight: 400; color: var(--muted); }
+.mini p { display: inline; font-size: 17px; color: var(--text-2); }
+
+/* цепочки шагов — обычная строка со стрелками */
+.funnel-steps { gap: 8px; margin: 12px 0 20px; }
+.funnel-steps span { background: none; padding: 0; font-size: 16px; color: var(--text-2); }
+
+/* вкладки ниш — подчёркнутый текст */
+.niche-tabs .nt-head { gap: 20px; border-bottom: 1px solid var(--border); margin-bottom: 14px; }
+.niche-tabs .nt-head button { border: 0; background: none; border-radius: 0; padding: 8px 0; font-size: 14px; color: var(--muted); border-bottom: 2px solid transparent; margin-bottom: -1px; }
+.niche-tabs .nt-head button.on { background: none; color: var(--text); border-bottom-color: var(--text); }
+.niche-tabs .nt-body .box { border-left: 0; padding-left: 0; margin: 0; }
+
+/* сценарий по секундам */
+.scene { grid-template-columns: 90px 1fr; }
+.scene .t { color: var(--muted); font-weight: 500; }
+
+/* конец урока */
+.done-row { margin-top: 44px; }
+.pager { display: flex; justify-content: space-between; gap: 24px; margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--border); }
+.pager a { background: none; border: 0; padding: 0; border-radius: 0; max-width: 46%; }
+.pager a:hover b { text-decoration: underline; text-underline-offset: 4px; }
+.pager small { color: var(--muted); }
+.pager .next { margin-left: auto; text-align: right; }
+
+/* боковые колонки спокойнее */
+.sidebar-group h4 { color: var(--muted); }
+.sidebar a.active { background: none; color: var(--text); font-weight: 600; }
+.sidebar a:hover { background: none; color: var(--text); }
+.toc-side a.on { border-left-color: var(--text); }
+
+/* инструменты: без плиток-значков у заголовка */
+.th-icon { display: none; }
+
+@media (max-width: 680px) {
+  .row { grid-template-columns: 26px minmax(0, 1fr) auto 24px; gap: 10px; }
+  .row-tool { grid-template-columns: minmax(0, 1fr) auto; }
+  .sp-head { display: block; }
+  .sp-head p { margin-top: 6px; }
+  .pager a { max-width: 48%; }
+}

@@ -166,6 +166,15 @@ details.more .input, details.more .textarea { background: var(--surface); }
 .scroll-panel { max-height: calc(100vh - 100px); overflow: auto; }
 .ai-result { margin-top: 12px; }
 
+/* ---------- План на сегодня ---------- */
+.today { margin-top: 12px; padding: 26px 28px; }
+.today-note { margin: 0 0 16px; color: var(--text-2); max-width: 760px; }
+.today .howto { margin: 0; }
+.today .howto li { font-size: 16px; margin-bottom: 14px; }
+.today .howto li:last-child { margin-bottom: 0; }
+.today .howto a { color: var(--text); text-decoration: underline; text-decoration-color: var(--border-strong); text-underline-offset: 4px; }
+.today .howto a:hover { text-decoration-color: var(--accent); }
+
 /* ---------- Адаптив ---------- */
 @media (max-width: 1080px) {
   .stage { grid-template-columns: 1fr; }

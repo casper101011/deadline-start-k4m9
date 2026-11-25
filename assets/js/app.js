@@ -67,6 +67,9 @@ const SITE = Object.assign({
   h1: 'Таргетолог отвечает за <span class="accent">продажи</span>, а не за клики',
   sub: n => `Пошаговая система работы с клиентом: от разбора бизнеса до масштабирования. 3 этапа, ${n} уроков и инструменты, которыми можно пользоваться уже сегодня.`,
   tagline: 'обучение таргету',
+  homeworkTitle: 'Внедри сегодня',
+  homeworkLead: 'Знания без действий = 0. Сделай это на своём реальном проекте:',
+  today: null, // { title, note, items: [[текст, ссылка], ...] } — блок «План на сегодня»
   principles: [
     ['Бизнес, а не кабинет', 'Сначала разбираемся в продукте, чеке и марже клиента — потом настраиваем рекламу.'],
     ['Гипотезы, а не «на авось»', 'Запускаем 2–3 варианта сразу и оставляем то, что даёт заявки дешевле.'],
@@ -78,84 +81,47 @@ const SITE = Object.assign({
 function pageHome() {
   const total = LESSONS.length, d = doneCount();
   const next = LESSONS.find(l => !isDone(l.slug)) || LESSONS[0];
-  const mins = LESSONS.reduce((a, l) => a + l.minutes, 0);
   return `
   <section class="container hero">
-    <span class="eyebrow"><span class="dot"></span>${SITE.eyebrow}</span>
     <h1 class="display">${SITE.h1}</h1>
     <div class="hero-row">
       <p class="hero-sub">${SITE.sub(total)}</p>
       <div class="hero-side">
         <div class="hero-actions">
           <a class="btn btn-primary" href="#/lesson/${next.slug}">${d ? 'Продолжить обучение' : 'Начать обучение'} ${icon('arrowRight', 'icon-sm')}</a>
-          <a class="btn btn-ghost" href="#/tools/offer">${icon('sparkles', 'icon-sm')} Конструктор оффера</a>
         </div>
         <div class="hero-progress">
-          <div class="progress-label"><span>${d ? 'Следующий урок: ' + esc(next.title.length > 36 ? next.title.slice(0, 36) + '…' : next.title) : 'Ваш прогресс'}</span><span>${d} из ${total}</span></div>
+          <div class="progress-label"><span>Пройдено уроков</span><span>${d} из ${total}</span></div>
           <div class="progress-bar"><span style="width:${Math.round(d / total * 100)}%"></span></div>
         </div>
       </div>
     </div>
   </section>
 
-  <section class="container">
-    <div class="stats-strip">
-      <div><b>${total}</b><span>уроков</span></div>
-      <div><b>${TOOLS.length}</b><span>${TOOLS.length === 1 ? 'инструмент' : 'инструмента'}</span></div>
-      <div><b>~${mins}</b><span>минут чтения</span></div>
-      <div><b>10</b><span>ниш в примерах</span></div>
-    </div>
-    <div class="principles">
-      ${SITE.principles.map(([t, p], i) => `<div class="card principle reveal"><div class="num">0${i + 1}</div><h3>${t}</h3><p>${p}</p></div>`).join('')}
-    </div>
-  </section>
+  ${SITE.today ? `<section class="container"><div class="stage-plain today">
+    <div class="sp-head"><h2>${SITE.today.title}</h2>${SITE.today.note ? `<p>${SITE.today.note}</p>` : ''}</div>
+    <ol class="today-list">${SITE.today.items.map(([t, href]) => `<li>${href ? `<a href="${href}">${t}</a>` : t}</li>`).join('')}</ol>
+  </div></section>` : ''}
 
   <section class="container" id="program">
-    <div class="section-head">
-      <h2 class="display">Программа</h2>
-      <p>Проходите по порядку и внедряйте каждый урок на реальном проекте.</p>
-    </div>
     ${STAGES.map(s => {
-      const ls = LESSONS.filter(l => l.stage === s.n), dn = ls.filter(l => isDone(l.slug)).length;
+      const ls = LESSONS.filter(l => l.stage === s.n);
       return `
-      <div class="stage reveal">
-        <div class="card stage-info">
-          <span class="si-num">0${s.n}</span>
-          <div><span class="eyebrow"><span class="dot"></span>${s.title}</span><h3 class="display">${s.name}</h3><p>${s.desc}</p></div>
-          <div class="si-meta">${icon('clock', 'icon-sm')} ${ls.length} ${ls.length === 1 ? 'урок' : ls.length < 5 ? 'урока' : 'уроков'} · ${ls.reduce((a, l) => a + l.minutes, 0)} мин · пройдено ${dn}/${ls.length}</div>
-        </div>
-        <div class="stage-lessons">
-          ${LESSONS.filter(l => l.stage === s.n).map(l => `
-            <a class="card lesson-card" href="#/lesson/${l.slug}">
-              <div class="lc-top"><div class="lc-icon">${icon(l.icon)}</div><div class="done-mark ${isDone(l.slug) ? 'on' : ''}">${icon('check', 'icon-sm')}</div></div>
-              <h3>${l.title}</h3>
-              <p class="lc-short">${l.short}</p>
-              <div class="lc-meta">${icon('clock', 'icon-sm')} ${l.minutes} мин</div>
-            </a>`).join('')}
+      <div class="stage-plain">
+        <div class="sp-head"><h2>${s.title}. ${s.name}</h2><p>${s.desc}</p></div>
+        <div class="rows">
+          ${ls.map((l, i) => `<a class="row" href="#/lesson/${l.slug}"><span class="rn">${i + 1}</span><span class="rt">${l.title}</span><span class="rm">${l.minutes} мин</span><span class="done-mark ${isDone(l.slug) ? 'on' : ''}">${icon('check', 'icon-sm')}</span></a>`).join('')}
         </div>
       </div>`;
     }).join('')}
-  </section>
 
-  <section class="container" style="margin-top:70px">
-    <div class="section-head">
-      <h2 class="display">Инструменты</h2>
-      <p>Применяйте уроки сразу: офферы, расчёты, отчёты и чек-листы.</p>
+    <div class="stage-plain">
+      <div class="sp-head"><h2>Инструменты</h2><p>Применяйте уроки сразу.</p></div>
+      <div class="rows">
+        ${TOOLS.map(t => `<a class="row row-tool" href="#/tools/${t.slug}"><span class="rt">${t.title}<small>${t.desc}</small></span><span class="rm">${icon('arrowRight', 'icon-sm')}</span></a>`).join('')}
+        <a class="row row-tool" href="#/glossary"><span class="rt">Словарь терминов<small>CPL, ROMI, оффер, хук — простыми словами и с примерами.</small></span><span class="rm">${icon('arrowRight', 'icon-sm')}</span></a>
+      </div>
     </div>
-    <div class="tools-grid">
-      ${TOOLS.map(t => `
-        <a class="card tool-card reveal" href="#/tools/${t.slug}">
-          <div class="tc-icon">${icon(t.icon)}</div>
-          <h3>${t.title}</h3>
-          <p>${t.desc}</p>
-          <span class="go">Открыть ${icon('arrowRight', 'icon-sm')}</span>
-        </a>`).join('')}
-    </div>
-    <a class="card glossary-banner reveal" href="#/glossary">
-      <div>${icon('book', 'icon-lg')}</div>
-      <div><h3>Словарь терминов</h3><p>CPL, ROMI, оффер, хук, ретаргет — простыми словами и с примерами. Для тех, кто только начинает.</p></div>
-      <span class="go">Открыть ${icon('arrowRight', 'icon-sm')}</span>
-    </a>
   </section>`;
 }
 
@@ -180,34 +146,24 @@ function pageLesson(slug) {
   if (i < 0) return null;
   const l = LESSONS[i], prev = LESSONS[i - 1], next = LESSONS[i + 1];
   const st = STAGES.find(s => s.n === l.stage);
-  const posInStage = LESSONS.filter(x => x.stage === l.stage).indexOf(l) + 1;
   return `
   <div class="lesson-layout has-toc">
     <aside class="sidebar" id="sidebar">${sidebarHtml(slug)}</aside>
     <article class="article">
-      <div class="crumbs"><a href="#/">Главная</a>${icon('arrowRight', 'icon-sm')}<span>${st.title} · урок ${posInStage}</span></div>
-      <div class="cover" style="${bgPhoto('s' + l.stage, 1100, .2, .85)}"><small>${st.title}</small><b>${st.name}</b></div>
       <header class="article-head">
-        <div style="display:flex;gap:8px;flex-wrap:wrap"><span class="tag tag-accent">${st.title} · ${st.name}</span><span class="tag">${icon('clock', 'icon-sm')} ${l.minutes} мин</span>${isDone(slug) ? `<span class="tag tag-good">${icon('check', 'icon-sm')} Пройден</span>` : ''}</div>
+        <p class="l-meta">${st.title} · ${st.name} · ${l.minutes} мин${isDone(slug) ? ' · пройден' : ''}</p>
         <h1 class="display">${l.title}</h1>
-        <div class="goal">${icon('target')}<div><b>Цель урока</b>${l.goal}</div></div>
+        <p class="lead">${l.goal}</p>
       </header>
-      ${l.toc && l.toc.length ? `<nav class="toc">${l.toc.map(([id, t]) => `<a href="#/lesson/${slug}/${id}">${t}</a>`).join('')}</nav>` : ''}
       <div class="prose">${l.html}</div>
-      <div class="summary prose"><h3>Главное</h3>${ok(l.summary)}</div>
-      <div class="homework"><h3>${icon('zap', 'icon-lg')} Внедри сегодня</h3><p>Знания без действий = 0. Сделай это на своём реальном проекте:</p><ol>${l.homework.map(h => `<li>${h}</li>`).join('')}</ol></div>
-      <div class="lesson-done">
-        <p>${isDone(slug) ? 'Урок отмечен как пройденный.' : 'Прочитал и внедрил? Отметь урок — прогресс сохранится в этом браузере.'}</p>
-        <button class="btn ${isDone(slug) ? 'btn-ghost' : 'btn-accent'}" id="doneBtn">${isDone(slug) ? 'Снять отметку' : icon('check', 'icon-sm') + ' Урок пройден'}</button>
+      <section class="prose end"><h2>Главное</h2>${ul(l.summary)}</section>
+      <section class="prose end"><h2>${SITE.homeworkTitle}</h2><p>${SITE.homeworkLead}</p>${ol(l.homework)}</section>
+      <div class="done-row">
+        <button class="btn ${isDone(slug) ? 'btn-ghost' : 'btn-primary'}" id="doneBtn">${isDone(slug) ? 'Снять отметку «пройден»' : 'Отметить урок пройденным'}</button>
       </div>
-      ${next ? '' : `<div class="finale" style="${bgPhoto('finale', 1100, .45, .92)}">
-        <h3 class="display">Теория закончилась. Дальше — практика</h3>
-        <p>Соберите офферы для своего клиента, посчитайте окупаемость и пройдитесь по чек-листу проекта.</p>
-        <div class="hero-actions"><a class="btn btn-primary" href="#/tools/offer">${icon('sparkles', 'icon-sm')} Конструктор оффера</a><a class="btn btn-ghost" href="#/tools/checklist">${icon('clipboard', 'icon-sm')} Чек-лист проекта</a></div>
-      </div>`}
       <nav class="pager">
-        ${prev ? `<a href="#/lesson/${prev.slug}"><small>${icon('arrowLeft', 'icon-sm')} Назад</small><b>${prev.title}</b></a>` : '<span></span>'}
-        ${next ? `<a class="next" href="#/lesson/${next.slug}"><small>Дальше ${icon('arrowRight', 'icon-sm')}</small><b>${next.title}</b></a>` : `<a class="next" href="#/glossary"><small>Справка ${icon('arrowRight', 'icon-sm')}</small><b>Словарь терминов</b></a>`}
+        ${prev ? `<a href="#/lesson/${prev.slug}"><small>← Назад</small><b>${prev.title}</b></a>` : '<span></span>'}
+        ${next ? `<a class="next" href="#/lesson/${next.slug}"><small>Дальше →</small><b>${next.title}</b></a>` : `<a class="next" href="#/tools/offer"><small>Дальше →</small><b>Инструменты и словарь</b></a>`}
       </nav>
     </article>
     ${l.toc && l.toc.length ? `<aside class="toc-side"><h4>На этой странице</h4>${l.toc.map(([id, t]) => `<a href="#/lesson/${slug}/${id}" data-id="${id}">${t}</a>`).join('')}</aside>` : ''}
